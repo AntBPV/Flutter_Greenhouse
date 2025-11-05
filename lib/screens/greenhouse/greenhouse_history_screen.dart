@@ -37,11 +37,10 @@ class _GreenhouseHistoryScreenState extends State<GreenhouseHistoryScreen>
   Future<void> _loadStats() async {
     setState(() => _loadingStats = true);
     try {
-      final stats = await context
-          .read<GreenhouseDetailProvider>()
-          .getSensorStats(
-            since: DateTime.now().subtract(const Duration(days: 1)),
-          );
+      final provider = context.read<GreenhouseDetailProvider>();
+      final stats = await provider.getSensorStats(
+        since: DateTime.now().subtract(const Duration(days: 1)),
+      );
       setState(() {
         _stats = stats;
         _loadingStats = false;

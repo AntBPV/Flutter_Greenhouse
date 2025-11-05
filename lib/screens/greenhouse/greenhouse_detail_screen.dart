@@ -17,12 +17,14 @@ class GreenhouseDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final manager = context.read<GreenhouseManagerProvider>();
+    final manager = context.watch<GreenhouseManagerProvider>();
     final repository = manager.getRepository(greenhouse.id);
 
     // Si no existe el repository, crearlo conectando el invernadero
     if (repository == null) {
-      manager.connectGreenhouse(greenhouse.id);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        manager.connectGreenhouse(greenhouse.id);
+      });
       return Scaffold(
         appBar: AppBar(title: Text(greenhouse.name)),
         body: const Center(child: CircularProgressIndicator()),
@@ -59,11 +61,15 @@ class _GreenhouseDetailContent extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.history),
             onPressed: () {
+              final detailProvider = context.read<GreenhouseDetailProvider>();
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      GreenhouseHistoryScreen(greenhouse: greenhouse),
+                  builder: (context) => ChangeNotifierProvider.value(
+                    value: detailProvider, // ← Compartir el provider existente
+                    child: GreenhouseHistoryScreen(greenhouse: greenhouse),
+                  ),
                 ),
               );
             },

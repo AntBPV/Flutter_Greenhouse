@@ -53,7 +53,11 @@ class ConnectionWidgetDetail extends StatelessWidget {
                     const SizedBox(width: 8),
                     if (!provider.isConnected)
                       ElevatedButton.icon(
-                        onPressed: provider.isLoading ? null : provider.connect,
+                        onPressed: provider.isLoading
+                            ? null
+                            : () async {
+                                await provider.connect();
+                              },
                         icon: provider.isLoading
                             ? const SizedBox(
                                 width: 16,
@@ -73,7 +77,9 @@ class ConnectionWidgetDetail extends StatelessWidget {
                       ),
                     if (provider.isConnected)
                       ElevatedButton.icon(
-                        onPressed: provider.disconnect,
+                        onPressed: () async {
+                          await provider.disconnect();
+                        },
                         icon: const Icon(Icons.link_off),
                         label: const Text('Desconectar'),
                         style: ElevatedButton.styleFrom(

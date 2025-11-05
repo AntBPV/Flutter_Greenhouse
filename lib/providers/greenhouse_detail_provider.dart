@@ -7,7 +7,7 @@ import '../repositories/greenhouse_repository.dart';
 
 class GreenhouseDetailProvider with ChangeNotifier {
   final Greenhouse greenhouse;
-  final GreenhouseRepository _repository;
+  final GreenhouseRepository repository;
 
   // Estado actual
   SensorData? _currentSensorData;
@@ -37,29 +37,30 @@ class GreenhouseDetailProvider with ChangeNotifier {
 
   GreenhouseDetailProvider({
     required this.greenhouse,
-    required GreenhouseRepository repository,
-  }) : _repository = repository {
+    required this.repository,
+  }) {
     _initialize();
   }
 
-  void _initialize() {
-    // Cargar datos iniciales desde DB
+  void _initialize() async {
+    await connect();
     _loadInitialData();
+    _isLoading = true;
 
     // Suscribirse a streams del repository
-    _sensorSubscription = _repository.sensorDataStream.listen((data) {
+    _sensorSubscription = repository.sensorDataStream.listen((data) {
       _currentSensorData = data;
       _addToSensorHistory(data);
       notifyListeners();
     });
 
-    _statusSubscription = _repository.statusStream.listen((status) {
+    _statusSubscription = repository.statusStream.listen((status) {
       _currentStatus = status;
       _addToStatusHistory(status);
       notifyListeners();
     });
 
-    _connectionSubscription = _repository.connectionStream.listen((connected) {
+    _connectionSubscription = repository.connectionStream.listen((connected) {
       _isConnected = connected;
       if (connected) {
         _lastError = null;
@@ -67,10 +68,12 @@ class GreenhouseDetailProvider with ChangeNotifier {
       notifyListeners();
     });
 
-    _errorSubscription = _repository.errorsStream.listen((error) {
+    _errorSubscription = repository.errorsStream.listen((error) {
       _lastError = error;
       notifyListeners();
     });
+
+    _isLoading = false;
   }
 
   Future<void> _loadInitialData() async {
@@ -79,8 +82,8 @@ class GreenhouseDetailProvider with ChangeNotifier {
 
     try {
       // Cargar último estado desde cache del repository
-      _currentSensorData = _repository.latestSensorData;
-      _currentStatus = _repository.latestStatus;
+      _currentSensorData = repository.latestSensorData;
+      _currentStatus = repository.latestStatus;
 
       // Cargar historial reciente
       await loadRecentHistory();
@@ -110,15 +113,20 @@ class GreenhouseDetailProvider with ChangeNotifier {
   // ==================== CONEXIÓN ====================
 
   Future<void> connect() async {
+    if (_isConnected) return;
     _isLoading = true;
     _lastError = null;
     notifyListeners();
 
     try {
-      await _repository.connect();
+      await repository.connect();
+      _isConnected = true;
+      // _isConnected = true; forzar el estado tras conexión
+      notifyListeners();
     } catch (e) {
       _lastError = 'Error al conectar: $e';
-      print(_lastError);
+      // _isConnected = false;
+      notifyListeners();
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -126,7 +134,7 @@ class GreenhouseDetailProvider with ChangeNotifier {
   }
 
   Future<void> disconnect() async {
-    await _repository.disconnect();
+    await repository.disconnect();
   }
 
   // ==================== COMANDOS ====================
@@ -137,7 +145,7 @@ class GreenhouseDetailProvider with ChangeNotifier {
       notifyListeners();
       return;
     }
-    _repository.servoLeft();
+    repository.servoLeft();
   }
 
   void servoRight() {
@@ -146,7 +154,7 @@ class GreenhouseDetailProvider with ChangeNotifier {
       notifyListeners();
       return;
     }
-    _repository.servoRight();
+    repository.servoRight();
   }
 
   void ledsToggle() {
@@ -155,7 +163,7 @@ class GreenhouseDetailProvider with ChangeNotifier {
       notifyListeners();
       return;
     }
-    _repository.ledsToggle();
+    repository.ledsToggle();
   }
 
   void ledsOn() {
@@ -164,7 +172,7 @@ class GreenhouseDetailProvider with ChangeNotifier {
       notifyListeners();
       return;
     }
-    _repository.ledsOn();
+    repository.ledsOn();
   }
 
   void ledsOff() {
@@ -173,7 +181,7 @@ class GreenhouseDetailProvider with ChangeNotifier {
       notifyListeners();
       return;
     }
-    _repository.ledsOff();
+    repository.ledsOff();
   }
 
   void readSensor() {
@@ -182,7 +190,7 @@ class GreenhouseDetailProvider with ChangeNotifier {
       notifyListeners();
       return;
     }
-    _repository.readSensor();
+    repository.readSensor();
   }
 
   void getStatus() {
@@ -191,15 +199,15 @@ class GreenhouseDetailProvider with ChangeNotifier {
       notifyListeners();
       return;
     }
-    _repository.getStatus();
+    repository.getStatus();
   }
 
   // ==================== HISTORIAL ====================
 
   Future<void> loadRecentHistory({int hours = 24}) async {
     try {
-      _sensorHistory = await _repository.getSensorDataLastHours(hours);
-      _statusHistory = await _repository.getStatusHistory(limit: 50);
+      _sensorHistory = await repository.getSensorDataLastHours(hours);
+      _statusHistory = await repository.getStatusHistory(limit: 50);
       notifyListeners();
     } catch (e) {
       print('Error al cargar historial: $e');
@@ -208,7 +216,7 @@ class GreenhouseDetailProvider with ChangeNotifier {
 
   Future<void> loadTodayData() async {
     try {
-      _sensorHistory = await _repository.getSensorDataToday();
+      _sensorHistory = await repository.getSensorDataToday();
       notifyListeners();
     } catch (e) {
       print('Error al cargar datos de hoy: $e');
@@ -216,17 +224,17 @@ class GreenhouseDetailProvider with ChangeNotifier {
   }
 
   Future<Map<String, dynamic>> getSensorStats({DateTime? since}) async {
-    return await _repository.getSensorStats(since: since);
+    return await repository.getSensorStats(since: since);
   }
 
   // ==================== MANTENIMIENTO ====================
 
   Future<void> cleanOldData({int keepDays = 7}) async {
-    await _repository.cleanOldData(keepDays: keepDays);
+    await repository.cleanOldData(keepDays: keepDays);
   }
 
   Future<void> clearAllData() async {
-    await _repository.clearAllData();
+    await repository.clearAllData();
     _currentSensorData = null;
     _currentStatus = null;
     _sensorHistory.clear();

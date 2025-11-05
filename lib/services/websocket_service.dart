@@ -11,7 +11,7 @@ class WebSocketService {
   StreamController<SensorData>? _sensorController;
   StreamController<SystemStatus>? _statusController;
   StreamController<String>? _errorController;
-  StreamController<bool>? _connectionController;
+  final _connectionController = StreamController<bool>.broadcast();
 
   String? _url;
   bool _isConnected = false;
@@ -27,7 +27,7 @@ class WebSocketService {
   Stream<SensorData> get sensorData => _sensorController!.stream;
   Stream<SystemStatus> get systemStatus => _statusController!.stream;
   Stream<String> get errors => _errorController!.stream;
-  Stream<bool> get connectionStatus => _connectionController!.stream;
+  Stream<bool> get connectionStatus => _connectionController.stream;
 
   bool get isConnected => _isConnected;
 
@@ -36,7 +36,7 @@ class WebSocketService {
     _sensorController = StreamController<SensorData>.broadcast();
     _statusController = StreamController<SystemStatus>.broadcast();
     _errorController = StreamController<String>.broadcast();
-    _connectionController = StreamController<bool>.broadcast();
+    _connectionController;
   }
 
   Future<void> connect(String url) async {
@@ -46,7 +46,7 @@ class WebSocketService {
   }
 
   Future<void> _connect() async {
-    if (_isConnected) return;
+    if (_isConnected || _url == null) return;
 
     try {
       print('Conectando al WebSocket: $_url');
@@ -56,12 +56,11 @@ class WebSocketService {
 
       _isConnected = true;
       _reconnectAttempts = 0;
-      _connectionController!.add(true);
+      _connectionController.add(true);
       print('WebSocket conectado exitosamente');
 
       // Iniciar heartbeat
       _startHeartbeat();
-
       // Solicitar estado inicial
       sendCommand('get_status');
 
@@ -75,7 +74,7 @@ class WebSocketService {
     } catch (e) {
       print('Error al conectar WebSocket: $e');
       _isConnected = false;
-      _connectionController!.add(false);
+      _connectionController.add(false);
       _scheduleReconnect();
     }
   }
@@ -118,18 +117,22 @@ class WebSocketService {
     print('Error en WebSocket: $error');
     _errorController!.add('Error de conexión: $error');
     _isConnected = false;
-    _connectionController!.add(false);
+    _connectionController.add(false);
+    _heartbeatTimer?.cancel();
+    _scheduleReconnect();
   }
 
   void _onDone() {
     print('WebSocket desconectado');
     _isConnected = false;
-    _connectionController!.add(false);
+    _connectionController.add(false);
     _heartbeatTimer?.cancel();
     _scheduleReconnect();
   }
 
   void _scheduleReconnect() {
+    if (_url == null) return;
+
     if (_reconnectAttempts >= _maxReconnectAttempts) {
       print('Máximo de intentos de reconexión alcanzado');
       _errorController!.add('No se pudo reconectar al servidor');
@@ -156,7 +159,7 @@ class WebSocketService {
   // ==================== COMANDOS ====================
 
   void sendCommand(String action, {Map<String, dynamic>? additionalData}) {
-    if (!_isConnected) {
+    if (_isConnected && _url == null) {
       _errorController!.add('No conectado al WebSocket');
       return;
     }
@@ -189,11 +192,11 @@ class WebSocketService {
 
     if (_channel != null) {
       await _channel!.sink.close();
-      _channel = null;
+      // _channel = null;
     }
 
     _isConnected = false;
-    _connectionController!.add(false);
+    _connectionController.add(false);
     print('WebSocket desconectado manualmente');
   }
 
@@ -203,6 +206,6 @@ class WebSocketService {
     _sensorController?.close();
     _statusController?.close();
     _errorController?.close();
-    _connectionController?.close();
+    _connectionController.close();
   }
 }
