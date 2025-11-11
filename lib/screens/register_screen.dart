@@ -41,15 +41,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
 
       if (user != null && mounted) {
-        // Mostrar mensaje de éxito
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('¡Registro exitoso! Redirigiendo...'),
-            backgroundColor: Colors.green,
+          SnackBar(
+            content: const Text('¡Registro exitoso! Redirigiendo...'),
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           ),
         );
 
-        // Esperar un momento antes de navegar
         await Future.delayed(const Duration(seconds: 1));
 
         if (mounted) {
@@ -60,161 +58,155 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(e.toString().replaceAll('Exception: ', '')),
-            backgroundColor: Colors.red,
+            content: Text(
+              e.toString().replaceAll('Exception: ', ''),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onErrorContainer,
+              ),
+            ),
+            backgroundColor: Theme.of(context).colorScheme.errorContainer,
           ),
         );
       }
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
+      appBar: AppBar(
+        title: const Text('Crear cuenta'),
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
+      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Logo o título
-                  Icon(
-                    Icons.person_add_outlined,
-                    size: 80,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Crear Cuenta',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Completa los datos para registrarte',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyLarge?.copyWith(color: Colors.grey),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 48),
-
-                  // Campo de email
-                  CustomTextField(
-                    controller: _emailController,
-                    label: 'Email',
-                    hint: 'correo@ejemplo.com',
-                    keyboardType: TextInputType.emailAddress,
-                    prefixIcon: Icons.email_outlined,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingresa tu email';
-                      }
-                      if (!value.contains('@')) {
-                        return 'Por favor ingresa un email válido';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Campo de contraseña
-                  CustomTextField(
-                    controller: _passwordController,
-                    label: 'Contraseña',
-                    hint: '••••••••',
-                    obscureText: _obscurePassword,
-                    prefixIcon: Icons.lock_outline,
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
-                      ),
-                      onPressed: () {
-                        setState(() => _obscurePassword = !_obscurePassword);
-                      },
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingresa tu contraseña';
-                      }
-                      if (value.length < 6) {
-                        return 'La contraseña debe tener al menos 6 caracteres';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Campo de confirmar contraseña
-                  CustomTextField(
-                    controller: _confirmPasswordController,
-                    label: 'Confirmar Contraseña',
-                    hint: '••••••••',
-                    obscureText: _obscureConfirmPassword,
-                    prefixIcon: Icons.lock_outline,
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureConfirmPassword
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
-                      ),
-                      onPressed: () {
-                        setState(
-                          () => _obscureConfirmPassword =
-                              !_obscureConfirmPassword,
-                        );
-                      },
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor confirma tu contraseña';
-                      }
-                      if (value != _passwordController.text) {
-                        return 'Las contraseñas no coinciden';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Botón de registro
-                  CustomButton(
-                    text: 'Registrarse',
-                    onPressed: _handleRegister,
-                    isLoading: _isLoading,
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Link a login
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+            padding: const EdgeInsets.all(16.0),
+            child: Card(
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              color: theme.cardColor,
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Text('¿Ya tienes cuenta? '),
+                      Text(
+                        'Regístrate para continuar',
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Campo de correo
+                      CustomTextField(
+                        controller: _emailController,
+                        label: 'Correo electrónico',
+                        prefixIcon: Icons.email,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor ingresa tu correo';
+                          }
+                          if (!value.contains('@')) {
+                            return 'Correo inválido';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Campo de contraseña
+                      CustomTextField(
+                        controller: _passwordController,
+                        label: 'Contraseña',
+                        prefixIcon: Icons.lock,
+                        obscureText: _obscurePassword,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () => setState(
+                            () => _obscurePassword = !_obscurePassword,
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor ingresa una contraseña';
+                          }
+                          if (value.length < 6) {
+                            return 'Debe tener al menos 6 caracteres';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Confirmar contraseña
+                      CustomTextField(
+                        controller: _confirmPasswordController,
+                        label: 'Confirmar contraseña',
+                        prefixIcon: Icons.lock_outline,
+                        obscureText: _obscureConfirmPassword,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscureConfirmPassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () => setState(
+                            () => _obscureConfirmPassword =
+                                !_obscureConfirmPassword,
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value != _passwordController.text) {
+                            return 'Las contraseñas no coinciden';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Botón de registro
+                      CustomButton(
+                        text: 'Registrarse',
+                        onPressed: _handleRegister,
+                        isLoading: _isLoading,
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Enlace a login
                       TextButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.pushReplacementNamed(context, '/login');
                         },
-                        child: const Text(
-                          'Inicia Sesión',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        child: Text(
+                          '¿Ya tienes una cuenta? Inicia sesión',
+                          style: TextStyle(
+                            color: colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
           ),

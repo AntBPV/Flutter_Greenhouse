@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/login_header.dart';
+import '../widgets/auth_navigation_text.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -45,19 +47,19 @@ class _LoginScreenState extends State<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.toString().replaceAll('Exception: ', '')),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -69,71 +71,42 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Logo o título
-                  Icon(
-                    Icons.lock_outline,
-                    size: 80,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Iniciar Sesión',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Bienvenido de nuevo',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyLarge?.copyWith(color: Colors.grey),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 48),
+                  const LoginHeader(),
 
-                  // Campo de email
+                  const SizedBox(height: 40),
+
                   CustomTextField(
                     controller: _emailController,
-                    label: 'Email',
-                    hint: 'correo@ejemplo.com',
+                    label: 'Correo electrónico',
+                    hint: 'Ingresa tu correo',
                     keyboardType: TextInputType.emailAddress,
-                    prefixIcon: Icons.email_outlined,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingresa tu email';
-                      }
-                      if (!value.contains('@')) {
-                        return 'Por favor ingresa un email válido';
+                        return 'Ingresa un correo válido';
                       }
                       return null;
                     },
                   ),
                   const SizedBox(height: 16),
-
-                  // Campo de contraseña
                   CustomTextField(
                     controller: _passwordController,
                     label: 'Contraseña',
-                    hint: '••••••••',
+                    hint: 'Ingresa tu contraseña',
                     obscureText: _obscurePassword,
-                    prefixIcon: Icons.lock_outline,
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
+                            ? Icons.visibility_off
+                            : Icons.visibility,
                       ),
                       onPressed: () {
-                        setState(() => _obscurePassword = !_obscurePassword);
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
                       },
                     ),
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingresa tu contraseña';
-                      }
-                      if (value.length < 6) {
+                      if (value == null || value.length < 6) {
                         return 'La contraseña debe tener al menos 6 caracteres';
                       }
                       return null;
@@ -141,29 +114,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Botón de login
                   CustomButton(
-                    text: 'Iniciar Sesión',
-                    onPressed: _handleLogin,
-                    isLoading: _isLoading,
+                    text: _isLoading ? 'Cargando...' : 'Iniciar sesión',
+                    onPressed: _isLoading ? null : _handleLogin,
                   ),
-                  const SizedBox(height: 16),
 
-                  // Link a registro
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('¿No tienes cuenta? '),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/register');
-                        },
-                        child: const Text(
-                          'Regístrate',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
+                  const SizedBox(height: 24),
+
+                  AuthNavigationText(
+                    question: '¿No tienes cuenta?',
+                    actionText: 'Regístrate',
+                    onTap: () {
+                      Navigator.pushNamed(context, '/register');
+                    },
                   ),
                 ],
               ),
