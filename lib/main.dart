@@ -6,6 +6,7 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/home_screen.dart';
 import 'services/sqlite_service.dart';
+import 'services/hive_service.dart';
 import 'providers/greenhouse_manager_provider.dart';
 import 'providers/theme_provider.dart';
 
@@ -15,6 +16,8 @@ void main() async {
   await dotenv.load(fileName: ".env");
 
   await SupabaseConfig.initialize();
+
+  await HiveService.init();
 
   final databaseService = SQLiteService();
 
@@ -34,8 +37,7 @@ class MyApp extends StatelessWidget {
           create: (_) => GreenhouseManagerProvider(databaseService),
         ),
         ChangeNotifierProvider(
-          create: (_) =>
-              ThemeProvider()..loadThemeFromHive(), //TODO: Realizar HIVE
+          create: (_) => ThemeProvider()..loadThemeFromHive(),
         ),
       ],
       child: Consumer<ThemeProvider>(

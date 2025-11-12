@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
+import '../data/theme_box.dart';
 
 class ThemeProvider extends ChangeNotifier {
-  ThemeData _currentTheme = ThemeData(
+  late ThemeData _currentTheme;
+  bool _isDarkMode = false;
+
+  ThemeProvider() {
+    // Se cargará más adelante con loadThemeFromHive()
+    _currentTheme = _lightTheme;
+  }
+
+  ThemeData get theme => _currentTheme;
+  bool get isDarkMode => _isDarkMode;
+
+  static final ThemeData _lightTheme = ThemeData(
     colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+    brightness: Brightness.light,
     useMaterial3: true,
     cardTheme: const CardThemeData(
       elevation: 2,
@@ -21,14 +34,42 @@ class ThemeProvider extends ChangeNotifier {
     ),
   );
 
-  ThemeData get theme => _currentTheme;
+  static final ThemeData _darkTheme = ThemeData(
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: Colors.deepPurple,
+      brightness: Brightness.dark,
+    ),
+    brightness: Brightness.dark,
+    useMaterial3: true,
+    cardTheme: const CardThemeData(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        shape: MaterialStatePropertyAll(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+          ),
+        ),
+      ),
+    ),
+  );
 
+  /// Cargar el tema desde Hive al iniciar
   Future<void> loadThemeFromHive() async {
-    // TODO: Implementar Hive aquí
+    _isDarkMode = ThemeBox.loadTheme();
+    _currentTheme = _isDarkMode ? _darkTheme : _lightTheme;
+    notifyListeners();
   }
 
-  void setTheme(ThemeData theme) {
-    _currentTheme = theme;
+  /// Cambiar el tema y guardar en Hive
+  void toggleTheme() {
+    _isDarkMode = !_isDarkMode;
+    _currentTheme = _isDarkMode ? _darkTheme : _lightTheme;
+    ThemeBox.saveTheme(_isDarkMode);
     notifyListeners();
   }
 }
