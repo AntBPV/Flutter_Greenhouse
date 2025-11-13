@@ -13,8 +13,10 @@ class ThemeProvider extends ChangeNotifier {
   ThemeData get theme => _currentTheme;
   bool get isDarkMode => _isDarkMode;
 
+  // TODO: Cuadrar los colores manualmente, .fromSeed hace cosas raras y no quedan bien los colores
+  // TODO: Entre las cosas a agregar son: TextTheme, dividerColor
   static final ThemeData _lightTheme = ThemeData(
-    colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+    colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreen),
     brightness: Brightness.light,
     useMaterial3: true,
     cardTheme: const CardThemeData(
@@ -36,7 +38,7 @@ class ThemeProvider extends ChangeNotifier {
 
   static final ThemeData _darkTheme = ThemeData(
     colorScheme: ColorScheme.fromSeed(
-      seedColor: Colors.deepPurple,
+      seedColor: Colors.amber,
       brightness: Brightness.dark,
     ),
     brightness: Brightness.dark,

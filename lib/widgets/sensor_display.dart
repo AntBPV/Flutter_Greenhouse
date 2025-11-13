@@ -8,44 +8,57 @@ class SensorDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Consumer<GreenhouseDetailProvider>(
       builder: (context, provider, child) {
         final sensor = provider.currentSensorData;
 
         return Card(
+          elevation: 2,
+          color: colorScheme.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Encabezado
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Datos del Sensor',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     if (sensor != null)
                       Text(
                         DateFormat('HH:mm:ss').format(sensor.timestamp),
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontSize: 12,
+                        style: textTheme.labelSmall?.copyWith(
+                          color: colorScheme.outlineVariant,
                         ),
                       ),
                   ],
                 ),
+
                 const SizedBox(height: 16),
+
+                // Estado de datos
                 if (sensor == null)
-                  const Center(
+                  Center(
                     child: Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
                       child: Text(
                         'Sin datos del sensor',
-                        style: TextStyle(color: Colors.grey),
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.outline,
+                        ),
                       ),
                     ),
                   )
@@ -95,11 +108,15 @@ class _SensorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withOpacity(0.15),
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Column(
         children: [
@@ -107,15 +124,17 @@ class _SensorCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             label,
-            style: TextStyle(color: Colors.grey.shade700, fontSize: 12),
+            style: textTheme.labelMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             value,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+            style: textTheme.headlineSmall?.copyWith(
               color: color,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String label;
-  final String? hint; // ahora opcional
+  final String? hint;
   final bool obscureText;
   final TextInputType keyboardType;
   final IconData? prefixIcon;
@@ -57,7 +57,8 @@ class CustomTextField extends StatelessWidget {
         filled: true,
         // usar surface / surfaceVariant para que respete temas claros/oscuros
         fillColor:
-            theme.inputDecorationTheme.fillColor ?? colorScheme.surfaceVariant,
+            theme.inputDecorationTheme.fillColor ??
+            colorScheme.surfaceContainerHighest,
         // mantiene la apariencia del texto según el tema
         hintStyle: theme.textTheme.bodyMedium?.copyWith(
           color: colorScheme.onSurface.withOpacity(0.6),

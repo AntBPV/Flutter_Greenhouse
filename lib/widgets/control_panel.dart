@@ -13,6 +13,7 @@ class ControlPanel extends StatelessWidget {
         final status = provider.currentStatus;
 
         return Card(
+          color: Theme.of(context).cardColor,
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -80,8 +81,11 @@ class ControlPanel extends StatelessWidget {
                         icon: const Icon(Icons.lightbulb),
                         label: const Text('Encender'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.amber,
-                          foregroundColor: Colors.black,
+                          backgroundColor:
+                              Colors.amber.shade600, // más contrastante
+                          foregroundColor: Theme.of(
+                            context,
+                          ).colorScheme.onPrimary, // se adapta
                           padding: const EdgeInsets.all(16),
                         ),
                       ),
@@ -93,8 +97,12 @@ class ControlPanel extends StatelessWidget {
                         icon: const Icon(Icons.lightbulb_outline),
                         label: const Text('Apagar'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey,
-                          foregroundColor: Colors.white,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary,
+                          foregroundColor: Theme.of(
+                            context,
+                          ).colorScheme.onPrimary,
                           padding: const EdgeInsets.all(16),
                         ),
                       ),
@@ -126,8 +134,8 @@ class ControlPanel extends StatelessWidget {
                     icon: const Icon(Icons.sensors),
                     label: const Text('Leer Sensor'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
                       padding: const EdgeInsets.all(16),
                     ),
                   ),
