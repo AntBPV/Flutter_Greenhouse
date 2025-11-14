@@ -64,6 +64,7 @@ class ControlPanel extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 24),
+                // Divider(color: Theme.of(context).dividerColor)??
                 const Divider(),
                 const SizedBox(height: 16),
 

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:greenhouse/providers/greenhouse_manager_provider.dart';
+import 'package:greenhouse/widgets/info_card.dart';
 
 class AddGreenhouseScreen extends StatefulWidget {
-  const AddGreenhouseScreen({Key? key}) : super(key: key);
+  const AddGreenhouseScreen({super.key});
 
   @override
   State<AddGreenhouseScreen> createState() => _AddGreenhouseScreenState();
@@ -23,9 +24,7 @@ class _AddGreenhouseScreenState extends State<AddGreenhouseScreen> {
   }
 
   Future<void> _saveGreenhouse() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
@@ -39,19 +38,20 @@ class _AddGreenhouseScreenState extends State<AddGreenhouseScreen> {
 
     if (!mounted) return;
 
+    final cs = Theme.of(context).colorScheme;
+
     if (greenhouse != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Invernadero "${greenhouse.name}" añadido'),
-          backgroundColor: Colors.green,
+          backgroundColor: cs.primary,
         ),
       );
       Navigator.pop(context);
     } else {
-      // Mostrar error del manager
       if (manager.error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(manager.error!), backgroundColor: Colors.red),
+          SnackBar(content: Text(manager.error!), backgroundColor: cs.error),
         );
         manager.clearError();
       }
@@ -60,6 +60,8 @@ class _AddGreenhouseScreenState extends State<AddGreenhouseScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Nuevo Invernadero')),
       body: Form(
@@ -72,15 +74,15 @@ class _AddGreenhouseScreenState extends State<AddGreenhouseScreen> {
               child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: Colors.green.shade50,
+                  color: cs.primaryContainer,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.eco, size: 80, color: Colors.green.shade400),
+                child: Icon(Icons.eco, size: 80, color: cs.primary),
               ),
             ),
             const SizedBox(height: 32),
 
-            // Campo de nombre
+            // Campo nombre
             TextFormField(
               controller: _nameController,
               decoration: InputDecoration(
@@ -92,19 +94,19 @@ class _AddGreenhouseScreenState extends State<AddGreenhouseScreen> {
                 ),
               ),
               textCapitalization: TextCapitalization.words,
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
+              validator: (v) {
+                if (v == null || v.trim().isEmpty) {
                   return 'Por favor ingresa un nombre';
                 }
-                if (value.trim().length < 3) {
-                  return 'El nombre debe tener al menos 3 caracteres';
+                if (v.trim().length < 3) {
+                  return 'Debe tener al menos 3 caracteres';
                 }
                 return null;
               },
             ),
             const SizedBox(height: 16),
 
-            // Campo de URL
+            // Campo URL
             TextFormField(
               controller: _urlController,
               decoration: InputDecoration(
@@ -115,77 +117,46 @@ class _AddGreenhouseScreenState extends State<AddGreenhouseScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 helperText: 'Dirección del servidor WebSocket del ESP32',
-                helperMaxLines: 2,
               ),
               keyboardType: TextInputType.url,
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
+              validator: (v) {
+                if (v == null || v.trim().isEmpty) {
                   return 'Por favor ingresa la URL del WebSocket';
                 }
-                if (!value.startsWith('ws://') && !value.startsWith('wss://')) {
-                  return 'La URL debe comenzar con ws:// o wss://';
+                if (!v.startsWith('ws://') && !v.startsWith('wss://')) {
+                  return 'Debe comenzar con ws:// o wss://';
                 }
                 return null;
               },
             ),
             const SizedBox(height: 24),
 
-            // Información adicional
-            Card(
-              color: Colors.blue.shade50,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.info_outline, color: Colors.blue.shade700),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Información',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue.shade700,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      '• Asegúrate de que el ESP32 esté conectado a la misma red\n'
-                      '• Verifica que el servidor WebSocket esté activo\n'
-                      '• Usa la IP local del ESP32 (ej: 192.168.1.100)\n'
-                      '• El puerto debe coincidir con el configurado en el ESP32',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.blue.shade900,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            // Info Card reutilizable
+            const InfoCard(
+              title: 'Información',
+              icon: Icons.info_outline,
+              bulletPoints: [
+                'Asegúrate de que el ESP32 esté conectado a la misma red',
+                'Verifica que el servidor WebSocket esté activo',
+                'Usa la IP local del ESP32 (ej: 192.168.1.100)',
+                'El puerto debe coincidir con el configurado en el ESP32',
+              ],
             ),
             const SizedBox(height: 32),
 
-            // Botón de guardar
+            // Botón Guardar
             ElevatedButton.icon(
               onPressed: _isLoading ? null : _saveGreenhouse,
               icon: _isLoading
                   ? const SizedBox(
-                      width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
+                      width: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.add),
               label: Text(_isLoading ? 'Guardando...' : 'Añadir Invernadero'),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.all(16),
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
