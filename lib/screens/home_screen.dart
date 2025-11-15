@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../widgets/user_info_card.dart';
 import '../widgets/navigation_button.dart';
 import './greenhouse/greenhouse_list_screen.dart';
+import './gemini/chat_screen.dart';
 import './settings_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -58,6 +59,20 @@ class HomeScreen extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => const GreenhousesListScreen(),
                   ),
+                );
+              },
+            ),
+
+            const SizedBox(height: 20),
+
+            // Boton para el chatbot
+            NavigationButton(
+              label: 'Asistente IA',
+              icon: Icons.chat_bubble_outline,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ChatScreen()),
                 );
               },
             ),
