@@ -15,7 +15,8 @@ class NavigationButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+
+    final fgColor = colorScheme.onPrimary;
 
     return ElevatedButton.icon(
       onPressed: onTap,
@@ -28,7 +29,11 @@ class NavigationButton extends StatelessWidget {
       icon: Icon(icon),
       label: Text(
         label,
-        style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: fgColor,
+        ),
       ),
     );
   }
