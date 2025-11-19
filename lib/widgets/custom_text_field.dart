@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String label;
-  final String hint;
+  final String? hint;
   final bool obscureText;
   final TextInputType keyboardType;
   final IconData? prefixIcon;
@@ -14,7 +14,7 @@ class CustomTextField extends StatelessWidget {
     super.key,
     required this.controller,
     required this.label,
-    required this.hint,
+    this.hint,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.prefixIcon,
@@ -24,6 +24,9 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
@@ -37,25 +40,34 @@ class CustomTextField extends StatelessWidget {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.6)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.primary,
-            width: 2,
-          ),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.red),
+          borderSide: BorderSide(color: colorScheme.error),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.red, width: 2),
+          borderSide: BorderSide(color: colorScheme.error, width: 2),
         ),
         filled: true,
-        fillColor: Colors.grey.shade50,
+        // usar surface / surfaceVariant para que respete temas claros/oscuros
+        fillColor:
+            theme.inputDecorationTheme.fillColor ??
+            colorScheme.surfaceContainerHighest,
+        // mantiene la apariencia del texto según el tema
+        hintStyle: theme.textTheme.bodyMedium?.copyWith(
+          color: colorScheme.onSurface.withOpacity(0.6),
+        ),
+        labelStyle: theme.textTheme.bodyMedium,
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 14.0,
+          horizontal: 12.0,
+        ),
       ),
     );
   }

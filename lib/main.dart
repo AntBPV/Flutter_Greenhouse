@@ -1,40 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
 import 'config/supabase_config.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/home_screen.dart';
+import 'services/sqlite_service.dart';
+import 'services/hive_service.dart';
+import 'providers/greenhouse_manager_provider.dart';
+import 'providers/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Cargar variables de entorno
   await dotenv.load(fileName: ".env");
 
-  // Inicializar Supabase
   await SupabaseConfig.initialize();
 
-  runApp(const MyApp());
+  await HiveService.init();
+
+  final databaseService = SQLiteService();
+
+  runApp(MyApp(databaseService: databaseService));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final SQLiteService databaseService;
+
+  const MyApp({super.key, required this.databaseService});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Auth App',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => GreenhouseManagerProvider(databaseService),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ThemeProvider()..loadThemeFromHive(),
+        ),
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, _) {
+          return MaterialApp(
+            title: 'Greenhouse_App',
+            debugShowCheckedModeBanner: false,
+            theme: themeProvider.theme,
+            initialRoute: '/',
+            routes: {
+              '/': (context) => const LoginScreen(),
+              '/register': (context) => const RegisterScreen(),
+              '/home': (context) => const HomeScreen(),
+            },
+          );
+        },
       ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const LoginScreen(),
-        '/register': (context) => const RegisterScreen(),
-        '/home': (context) => const HomeScreen(),
-      },
     );
   }
 }
