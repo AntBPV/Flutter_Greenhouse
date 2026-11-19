@@ -29,7 +29,7 @@ class AuthService {
           id: response.user!.id,
           email: response.user!.email!,
           createdAt: response.user!.createdAt != null
-              ? DateTime.parse(response.user!.createdAt!)
+              ? DateTime.parse(response.user!.createdAt)
               : null,
         );
       }
@@ -57,7 +57,7 @@ class AuthService {
           id: response.user!.id,
           email: response.user!.email!,
           createdAt: response.user!.createdAt != null
-              ? DateTime.parse(response.user!.createdAt!)
+              ? DateTime.parse(response.user!.createdAt)
               : null,
         );
       }
@@ -86,7 +86,7 @@ class AuthService {
         id: user.id,
         email: user.email!,
         createdAt: user.createdAt != null
-            ? DateTime.parse(user.createdAt!)
+            ? DateTime.parse(user.createdAt)
             : null,
       );
     }

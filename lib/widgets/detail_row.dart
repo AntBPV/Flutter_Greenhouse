@@ -20,12 +20,12 @@ class DetailRow extends StatelessWidget {
 
     return Row(
       children: [
-        Icon(icon, size: 20, color: cs.onSurface.withOpacity(0.7)),
+        Icon(icon, size: 20, color: cs.onSurface.withValues(alpha: 0.7)),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
             label,
-            style: TextStyle(color: cs.onSurface.withOpacity(0.8)),
+            style: TextStyle(color: cs.onSurface.withValues(alpha: 0.8)),
           ),
         ),
         Text(

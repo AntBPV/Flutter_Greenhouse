@@ -16,7 +16,7 @@ class LoginHeader extends StatelessWidget {
           'Greenhouse App',
           style: textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
-            color: colorScheme.onBackground,
+            color: colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),

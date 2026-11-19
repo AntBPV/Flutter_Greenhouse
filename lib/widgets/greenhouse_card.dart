@@ -129,7 +129,7 @@ class _ConnectionStatus extends StatelessWidget {
       decoration: BoxDecoration(
         color: isConnected
             ? cs.secondaryContainer
-            : cs.surfaceVariant.withAlpha(90),
+            : cs.surfaceContainerHighest.withAlpha(90),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(

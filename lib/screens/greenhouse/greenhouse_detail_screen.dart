@@ -60,7 +60,7 @@ class _GreenhouseDetailContent extends StatelessWidget {
             Text(
               greenhouse.websocketUrl,
               style: textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ],

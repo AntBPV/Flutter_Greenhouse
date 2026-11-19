@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import '../providers/greenhouse_detail_provider.dart';
 
 class SensorDisplay extends StatelessWidget {
-  const SensorDisplay({Key? key}) : super(key: key);
+  const SensorDisplay({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -114,9 +114,9 @@ class _SensorCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [

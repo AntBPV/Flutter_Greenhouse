@@ -31,7 +31,7 @@ class SystemHistoryTab extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 12),
               child: ExpansionTile(
                 leading: CircleAvatar(
-                  backgroundColor: cs.primary.withOpacity(0.2),
+                  backgroundColor: cs.primary.withValues(alpha: 0.2),
                   child: const Icon(Icons.settings_remote, color: Colors.green),
                 ),
                 title: const Text(
@@ -42,7 +42,7 @@ class SystemHistoryTab extends StatelessWidget {
                   dateFormat.format(status.timestamp),
                   style: TextStyle(
                     fontSize: 12,
-                    color: cs.onSurface.withOpacity(0.6),
+                    color: cs.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
                 children: [
@@ -109,12 +109,12 @@ class _EmptyState extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.inbox, size: 64, color: cs.onSurface.withOpacity(0.4)),
+          Icon(Icons.inbox, size: 64, color: cs.onSurface.withValues(alpha: 0.4)),
           const SizedBox(height: 16),
           Text(
             message,
             style: TextStyle(
-              color: cs.onSurface.withOpacity(0.6),
+              color: cs.onSurface.withValues(alpha: 0.6),
               fontSize: 16,
             ),
           ),

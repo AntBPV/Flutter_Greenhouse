@@ -95,8 +95,8 @@ class _GreenhouseHistoryScreenState extends State<GreenhouseHistoryScreen>
           context.read<GreenhouseDetailProvider>().loadRecentHistory();
           _loadStats();
         },
-        child: const Icon(Icons.refresh),
         tooltip: 'Actualizar',
+        child: const Icon(Icons.refresh),
       ),
     );
   }
@@ -112,7 +112,7 @@ class _StatsSection extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
 
     return Container(
-      color: cs.surfaceVariant.withOpacity(0.3),
+      color: cs.surfaceContainerHighest.withValues(alpha: 0.3),
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,7 +152,7 @@ class _StatsSection extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             'Registros: ${stats['count']}',
-            style: TextStyle(color: cs.onSurface.withOpacity(0.7)),
+            style: TextStyle(color: cs.onSurface.withValues(alpha: 0.7)),
           ),
         ],
       ),

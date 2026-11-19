@@ -40,7 +40,7 @@ class CustomTextField extends StatelessWidget {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.6)),
+          borderSide: BorderSide(color: colorScheme.outline.withValues(alpha: 0.6)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -61,7 +61,7 @@ class CustomTextField extends StatelessWidget {
             colorScheme.surfaceContainerHighest,
         // mantiene la apariencia del texto según el tema
         hintStyle: theme.textTheme.bodyMedium?.copyWith(
-          color: colorScheme.onSurface.withOpacity(0.6),
+          color: colorScheme.onSurface.withValues(alpha: 0.6),
         ),
         labelStyle: theme.textTheme.bodyMedium,
         contentPadding: const EdgeInsets.symmetric(

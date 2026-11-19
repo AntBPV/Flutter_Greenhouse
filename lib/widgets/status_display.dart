@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/greenhouse_detail_provider.dart';
 
 class StatusDisplay extends StatelessWidget {
-  const StatusDisplay({Key? key}) : super(key: key);
+  const StatusDisplay({super.key});
 
   @override
   Widget build(BuildContext context) {

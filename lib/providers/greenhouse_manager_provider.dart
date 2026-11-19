@@ -7,7 +7,7 @@ class GreenhouseManagerProvider with ChangeNotifier {
   final SQLiteService _databaseService;
 
   List<Greenhouse> _greenhouses = [];
-  Map<String, GreenhouseRepository> _repositories = {};
+  final Map<String, GreenhouseRepository> _repositories = {};
   bool _isLoading = false;
   String? _error;
 

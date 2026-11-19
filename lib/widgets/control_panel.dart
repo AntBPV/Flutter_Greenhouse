@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/greenhouse_detail_provider.dart';
 
 class ControlPanel extends StatelessWidget {
-  const ControlPanel({Key? key}) : super(key: key);
+  const ControlPanel({super.key});
 
   @override
   Widget build(BuildContext context) {

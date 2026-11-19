@@ -10,7 +10,7 @@ class ChatBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
-    final background = isUser ? scheme.primaryContainer : scheme.surfaceVariant;
+    final background = isUser ? scheme.primaryContainer : scheme.surfaceContainerHighest;
 
     final textColor = scheme.onSurface;
 

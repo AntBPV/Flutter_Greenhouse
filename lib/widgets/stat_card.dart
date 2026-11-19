@@ -26,7 +26,7 @@ class StatCard extends StatelessWidget {
         boxShadow: [
           if (Theme.of(context).brightness == Brightness.light)
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -42,7 +42,7 @@ class StatCard extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 11,
-              color: colorScheme.onSurface.withOpacity(0.7),
+              color: colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
 

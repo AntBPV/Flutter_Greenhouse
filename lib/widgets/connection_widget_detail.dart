@@ -6,8 +6,7 @@ import '../models/greenhouse_model.dart';
 class ConnectionWidgetDetail extends StatelessWidget {
   final Greenhouse greenhouse;
 
-  const ConnectionWidgetDetail({Key? key, required this.greenhouse})
-    : super(key: key);
+  const ConnectionWidgetDetail({super.key, required this.greenhouse});
 
   @override
   Widget build(BuildContext context) {

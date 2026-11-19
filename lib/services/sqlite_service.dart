@@ -1,4 +1,5 @@
-import 'package:sqflite/sqflite.dart';
+import 'package:flutter/foundation.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
 import '../models/sensor_data.dart';
 import '../models/system_status.dart';
@@ -18,6 +19,14 @@ class SQLiteService {
   }
 
   Future<Database> _initDatabase() async {
+    if (!kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.linux ||
+            defaultTargetPlatform == TargetPlatform.macOS)) {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfi;
+    }
+
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, 'greenhouses_data.db');
 
